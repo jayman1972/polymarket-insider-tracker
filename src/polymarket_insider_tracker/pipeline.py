@@ -16,6 +16,7 @@ from typing import TYPE_CHECKING
 
 from redis.asyncio import Redis
 
+from polymarket_insider_tracker.alphascout_forwarder import forward_assessment_to_alphascout
 from polymarket_insider_tracker.alerter.channels.discord import DiscordChannel
 from polymarket_insider_tracker.alerter.channels.telegram import TelegramChannel
 from polymarket_insider_tracker.alerter.dispatcher import AlertChannel, AlertDispatcher
@@ -490,6 +491,19 @@ class Pipeline:
                 assessment.weighted_score,
             )
             return
+
+        # Forward to Alpha Scout / Supabase via DataBridge (optional)
+        if (
+            not self._dry_run
+            and self._settings.alphascout_webhook_url
+            and self._settings.alphascout_webhook_secret
+        ):
+            secret = self._settings.alphascout_webhook_secret.get_secret_value()
+            await forward_assessment_to_alphascout(
+                assessment,
+                webhook_url=self._settings.alphascout_webhook_url,
+                webhook_secret=secret,
+            )
 
         # Format and dispatch alert
         formatted_alert = self._alert_formatter.format(assessment)

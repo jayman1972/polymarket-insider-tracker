@@ -193,6 +193,16 @@ class Settings(BaseSettings):
         alias="DRY_RUN",
         description="Run without sending actual alerts",
     )
+    alphascout_webhook_url: str | None = Field(
+        default=None,
+        alias="ALPHASCOUT_WEBHOOK_URL",
+        description="DataBridge URL for POST /polymarket/alert (Supabase ingestion)",
+    )
+    alphascout_webhook_secret: SecretStr | None = Field(
+        default=None,
+        alias="ALPHASCOUT_WEBHOOK_SECRET",
+        description="Bearer token shared with DataBridge POLYMARKET_ALERT_WEBHOOK_SECRET",
+    )
 
     def get_logging_level(self) -> int:
         """Get the numeric logging level."""
@@ -221,6 +231,7 @@ class Settings(BaseSettings):
             "log_level": self.log_level,
             "health_port": str(self.health_port),
             "dry_run": str(self.dry_run),
+            "alphascout_webhook": "(set)" if self.alphascout_webhook_url else "(not set)",
         }
 
     @staticmethod
