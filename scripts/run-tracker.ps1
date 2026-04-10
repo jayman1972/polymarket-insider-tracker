@@ -26,10 +26,29 @@ Add-Content -Path $logFile -Value @(
   ''
 )
 
-# Fail fast if Docker daemon is not available (Task Scheduler has minimal PATH)
+# Fail fast: Docker CLI missing vs daemon not running (Task Scheduler has minimal PATH)
+$dockerCli = Get-Command docker -ErrorAction SilentlyContinue
+if (-not $dockerCli) {
+  $msg = @'
+ERROR: The "docker" command was not found. This project expects Docker for PostgreSQL and Redis (see docker-compose.yml and README).
+
+Install Docker Desktop for Windows, then restart your terminal (or sign out):
+https://docs.docker.com/desktop/install/windows-install/
+
+After install, open Docker Desktop once to finish setup, then run this script again.
+'@
+  Add-Content -Path $logFile -Value $msg
+  Write-Error $msg
+  exit 127
+}
+
 cmd /c "docker info >nul 2>&1"
 if ($LASTEXITCODE -ne 0) {
-  $msg = "ERROR: docker info failed (exit $LASTEXITCODE). Is Docker Desktop running?"
+  $msg = @"
+ERROR: Docker is installed but the engine is not reachable (docker info exit $LASTEXITCODE). Start Docker Desktop and wait until it shows the engine is running, then try again.
+
+If Docker is not installed, use: https://docs.docker.com/desktop/install/windows-install/
+"@
   Add-Content -Path $logFile -Value $msg
   Write-Error $msg
   exit $LASTEXITCODE

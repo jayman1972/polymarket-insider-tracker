@@ -1,5 +1,10 @@
 # Windows: run the tracker (Docker + app)
 
+**Docker is required.** The tracker’s default setup uses **PostgreSQL** and **Redis** from `docker-compose.yml`. Without Docker Desktop (or another Docker engine), `scripts/run-tracker.ps1` will exit with a clear log message. There is no supported “no Docker” path in this repo unless you change `.env` and infrastructure yourself.
+
+- **Install:** [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/) (WSL2 when the installer asks, unless you use Hyper-V backend on supported Windows).
+- **After install:** Open Docker Desktop once; wait until **Engine running**; then run the smoke test below.
+
 This repo includes portable scripts under `scripts/` — paths are resolved from the script location, not your username.
 
 | File | Purpose |
