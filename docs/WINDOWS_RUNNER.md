@@ -10,7 +10,8 @@ This repo includes portable scripts under `scripts/` — paths are resolved from
 | File | Purpose |
 |------|---------|
 | `scripts/run-tracker.ps1` | Ensures Docker is up, `docker compose up -d`, waits for DB/Redis, runs `uv run python -m polymarket_insider_tracker`, appends output to `logs/tracker-YYYYMMDD.log`, exits with the tracker’s exit code. |
-| `scripts/run-tracker-once.bat` | Wrapper so you can double-click or point Task Scheduler at a `.bat` file. |
+| `scripts/run-tracker-once.bat` | Calls the PowerShell script; good for Task Scheduler or double-click from `scripts/`. |
+| `Start-Polymarket-Tracker.bat` (repo root) | Same as above, from the clone root—easy to double-click or use as the Task Scheduler program. |
 
 ## Prerequisites (one-time)
 
@@ -37,7 +38,7 @@ cd <path-to>\polymarket-insider-tracker
 .\scripts\run-tracker.ps1
 ```
 
-Or double-click `scripts\run-tracker-once.bat`.
+Or double-click `Start-Polymarket-Tracker.bat` in the repo root, or `scripts\run-tracker-once.bat`.
 
 - On failure, open `logs\tracker-YYYYMMDD.log` (same calendar day).
 - The tracker is a **long-running daemon**; the script blocks until the process exits (Ctrl+C stops it when run interactively).
@@ -54,11 +55,14 @@ Use **Create Task** (not “Create Basic Task”) for full control.
    - **At log on** (your user), **or**
    - **At startup** with a **delay** of 1–2 minutes so Docker Desktop can start before the script runs.
 
-3. **Actions** → **Start a program**
-   - **Program:** `powershell.exe`
-   - **Arguments:** `-NoProfile -ExecutionPolicy Bypass -File "<REPO>\scripts\run-tracker.ps1"`  
-     Replace `<REPO>` with your clone path, e.g. `C:\Users\jmann\projects\polymarket-insider-tracker`.
-   - **Start in:** same `<REPO>` directory (repo root).
+3. **Actions** → **Start a program** (pick one)
+   - **Option A — root `.bat` (simplest):**
+     - **Program/script:** `"<REPO>\Start-Polymarket-Tracker.bat"` (include quotes if the path has spaces).
+     - **Start in:** `<REPO>` (repo root).
+   - **Option B — PowerShell directly:**
+     - **Program:** `powershell.exe`
+     - **Arguments:** `-NoProfile -ExecutionPolicy Bypass -File "<REPO>\scripts\run-tracker.ps1"`
+     - **Start in:** `<REPO>`
 
 4. **Conditions**
    - On a laptop, uncheck **Start the task only if the computer is on AC power** if you want it on battery.
