@@ -259,6 +259,8 @@ class RiskAssessment:
             "trade_size": str(self.trade_size_usdc),
             "trade_side": self.trade_event.side,
             "trade_price": str(self.trade_event.price),
+            "outcome": self.trade_event.outcome,
+            "outcome_index": self.trade_event.outcome_index,
             "signals_triggered": self.signals_triggered,
             "weighted_score": self.weighted_score,
             "should_alert": self.should_alert,
