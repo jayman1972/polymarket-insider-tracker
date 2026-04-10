@@ -116,3 +116,6 @@ Thumbs.db
 # Local development
 *.local
 .direnv/
+
+# Windows tracker launcher logs (committed scripts; do not commit log files)
+logs/*.log
