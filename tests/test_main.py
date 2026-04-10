@@ -108,8 +108,7 @@ class TestValidateConfig:
 
     def test_validate_config_failure(self, monkeypatch, capsys):
         """Should return None on invalid config."""
-        # Clear any existing DATABASE_URL
-        monkeypatch.delenv("DATABASE_URL", raising=False)
+        monkeypatch.setenv("DATABASE_URL", "mysql://invalid")
 
         settings = validate_config()
         assert settings is None
@@ -150,7 +149,7 @@ class TestMain:
 
     def test_main_with_invalid_config(self, monkeypatch):
         """Main should exit with config error on invalid config."""
-        monkeypatch.delenv("DATABASE_URL", raising=False)
+        monkeypatch.setenv("DATABASE_URL", "mysql://invalid")
 
         with pytest.raises(SystemExit) as exc_info:
             main([])

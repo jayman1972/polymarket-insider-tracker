@@ -9,18 +9,27 @@ from __future__ import annotations
 
 import logging
 from functools import lru_cache
+from pathlib import Path
 from typing import Literal
 
 from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+# Project root (contains .env). Nested BaseSettings do not inherit parent env_file.
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+
 
 class DatabaseSettings(BaseSettings):
     """Database connection settings."""
 
-    model_config = SettingsConfigDict(env_prefix="")
+    model_config = SettingsConfigDict(
+        env_prefix="",
+        env_file=_PROJECT_ROOT / ".env",
+        env_file_encoding="utf-8",
+    )
 
     url: str = Field(
+        default="postgresql://tracker:dev_password@localhost:5432/polymarket_tracker",
         alias="DATABASE_URL",
         description="PostgreSQL connection string",
     )
